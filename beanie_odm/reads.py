@@ -107,9 +107,12 @@ async def read_10000_orders(ctx):
     description="Select 100 Categories sorted by view_count descending",
 )
 async def read_100_categories(ctx):
-    await CategoryDoc.find().sort(
-        (CategoryDoc.view_count, SortDirection.DESCENDING)
-    ).limit(100).to_list()
+    await (
+        CategoryDoc.find()
+        .sort((CategoryDoc.view_count, SortDirection.DESCENDING))
+        .limit(100)
+        .to_list()
+    )
 
 
 @benchmark(
@@ -120,9 +123,12 @@ async def read_100_categories(ctx):
     description="Select 1,000 Categories sorted by view_count descending",
 )
 async def read_1000_categories(ctx):
-    await CategoryDoc.find().sort(
-        (CategoryDoc.view_count, SortDirection.DESCENDING)
-    ).limit(1000).to_list()
+    await (
+        CategoryDoc.find()
+        .sort((CategoryDoc.view_count, SortDirection.DESCENDING))
+        .limit(1000)
+        .to_list()
+    )
 
 
 @benchmark(
@@ -133,6 +139,9 @@ async def read_1000_categories(ctx):
     description="Select 10,000 Categories sorted by view_count descending",
 )
 async def read_10000_categories(ctx):
-    await CategoryDoc.find().sort(
-        (CategoryDoc.view_count, SortDirection.DESCENDING)
-    ).limit(10000).to_list()
+    await (
+        CategoryDoc.find()
+        .sort((CategoryDoc.view_count, SortDirection.DESCENDING))
+        .limit(10000)
+        .to_list()
+    )

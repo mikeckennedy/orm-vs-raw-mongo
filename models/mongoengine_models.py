@@ -3,6 +3,7 @@ import mongoengine as me
 
 # --- Embedded documents ---
 
+
 class Address(me.EmbeddedDocument):
     street = me.StringField(required=True)
     city = me.StringField(required=True)
@@ -30,6 +31,7 @@ class StatusEntry(me.EmbeddedDocument):
 
 
 # --- Top-level documents ---
+
 
 class CategoryDoc(me.Document):
     name = me.StringField(required=True, unique=True)

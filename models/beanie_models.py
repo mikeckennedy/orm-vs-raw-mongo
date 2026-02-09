@@ -6,6 +6,7 @@ from datetime import datetime
 
 # --- Subdocument models (plain Pydantic) ---
 
+
 class Address(BaseModel):
     street: str
     city: str
@@ -34,6 +35,7 @@ class StatusEntry(BaseModel):
 
 # --- Projection models ---
 
+
 class CategoryNameProjection(BaseModel):
     name: str
 
@@ -43,6 +45,7 @@ class OrderEmailProjection(BaseModel):
 
 
 # --- Document models ---
+
 
 class CategoryDoc(Document):
     name: str

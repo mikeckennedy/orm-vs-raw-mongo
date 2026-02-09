@@ -3,7 +3,7 @@ from collections import defaultdict
 from rich.console import Console
 from rich.table import Table
 
-from benchmarks.registry import Library, OpType
+from benchmarks.registry import OpType
 from benchmarks.runner import BenchmarkResult
 
 console = Console()
@@ -42,12 +42,16 @@ def print_results(results: list[BenchmarkResult]):
         by_name[r.benchmark.name][r.benchmark.library.value] = r
 
     # Print individual tables
-    reads = {k: v for k, v in by_name.items() if any(
-        r.benchmark.op_type == OpType.READ for r in v.values()
-    )}
-    writes = {k: v for k, v in by_name.items() if any(
-        r.benchmark.op_type == OpType.WRITE for r in v.values()
-    )}
+    reads = {
+        k: v
+        for k, v in by_name.items()
+        if any(r.benchmark.op_type == OpType.READ for r in v.values())
+    }
+    writes = {
+        k: v
+        for k, v in by_name.items()
+        if any(r.benchmark.op_type == OpType.WRITE for r in v.values())
+    }
 
     if reads:
         console.print("\n[bold underline]Read Benchmarks\n")
@@ -122,9 +126,17 @@ def _print_overhead_table(grouped: dict[str, dict[str, BenchmarkResult]]):
         beanie_r = lib_results.get("beanie")
         me_r = lib_results.get("mongoengine")
 
-        dc_mult = f"{dc_r.median_ms / raw_median:.1f}x" if dc_r and raw_median > 0 else "—"
-        beanie_mult = f"{beanie_r.median_ms / raw_median:.1f}x" if beanie_r and raw_median > 0 else "—"
-        me_mult = f"{me_r.median_ms / raw_median:.1f}x" if me_r and raw_median > 0 else "—"
+        dc_mult = (
+            f"{dc_r.median_ms / raw_median:.1f}x" if dc_r and raw_median > 0 else "—"
+        )
+        beanie_mult = (
+            f"{beanie_r.median_ms / raw_median:.1f}x"
+            if beanie_r and raw_median > 0
+            else "—"
+        )
+        me_mult = (
+            f"{me_r.median_ms / raw_median:.1f}x" if me_r and raw_median > 0 else "—"
+        )
 
         table.add_row(_label(name), dc_mult, beanie_mult, me_mult)
 

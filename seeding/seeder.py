@@ -1,5 +1,11 @@
 from pymongo import MongoClient, DESCENDING
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    BarColumn,
+    TaskProgressColumn,
+)
 
 from config import DB_NAME, SEED_COUNT, BATCH_SIZE
 from seeding.generator import DataGenerator

@@ -49,6 +49,7 @@ def benchmark(
         )
         _registry.append(info)
         return func
+
     return decorator
 
 

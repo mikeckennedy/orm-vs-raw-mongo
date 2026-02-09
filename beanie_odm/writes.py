@@ -2,7 +2,14 @@ import uuid
 from datetime import datetime
 
 from benchmarks.registry import benchmark, Library, OpType
-from models.beanie_models import CategoryDoc, OrderDoc, Address, Payment, LineItem, StatusEntry
+from models.beanie_models import (
+    CategoryDoc,
+    OrderDoc,
+    Address,
+    Payment,
+    LineItem,
+    StatusEntry,
+)
 from seeding.generator import DataGenerator
 
 _gen = DataGenerator(seed=99)

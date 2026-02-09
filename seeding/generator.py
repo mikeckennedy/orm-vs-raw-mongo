@@ -3,7 +3,14 @@ from datetime import datetime, timedelta
 from faker import Faker
 
 PAYMENT_METHODS = ["credit_card", "debit_card", "paypal", "apple_pay", "google_pay"]
-ORDER_STATUSES = ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"]
+ORDER_STATUSES = [
+    "pending",
+    "confirmed",
+    "processing",
+    "shipped",
+    "delivered",
+    "cancelled",
+]
 
 
 class DataGenerator:
@@ -21,9 +28,14 @@ class DataGenerator:
         self.first_names = [self.fake.first_name() for _ in range(500)]
         self.last_names = [self.fake.last_name() for _ in range(500)]
         self.email_domains = [
-            "gmail.com", "yahoo.com", "outlook.com",
-            "company.co", "example.com", "fastmail.com",
-            "proton.me", "icloud.com",
+            "gmail.com",
+            "yahoo.com",
+            "outlook.com",
+            "company.co",
+            "example.com",
+            "fastmail.com",
+            "proton.me",
+            "icloud.com",
         ]
         self.product_names = [self.fake.catch_phrase() for _ in range(500)]
         self.category_words = [self.fake.word() for _ in range(2_000)]
@@ -54,16 +66,20 @@ class DataGenerator:
     def _random_line_items(self, count: int) -> list[dict]:
         items = []
         for _ in range(count):
-            items.append({
-                "sku": f"SKU-{random.randint(10000, 99999)}",
-                "name": random.choice(self.product_names),
-                "quantity": random.randint(1, 10),
-                "unit_price_cents": random.randint(299, 49999),
-            })
+            items.append(
+                {
+                    "sku": f"SKU-{random.randint(10000, 99999)}",
+                    "name": random.choice(self.product_names),
+                    "quantity": random.randint(1, 10),
+                    "unit_price_cents": random.randint(299, 49999),
+                }
+            )
         return items
 
-    def _random_status_history(self, final_status: str, created_at: datetime) -> list[dict]:
-        status_order = ORDER_STATUSES[:ORDER_STATUSES.index(final_status) + 1]
+    def _random_status_history(
+        self, final_status: str, created_at: datetime
+    ) -> list[dict]:
+        status_order = ORDER_STATUSES[: ORDER_STATUSES.index(final_status) + 1]
         history = []
         t = created_at
         for s in status_order:

@@ -26,7 +26,9 @@ def read_single_field_category(ctx):
 def read_single_field_order(ctx):
     db = ctx["db"]
     order_number = ctx["targets"]["order_number"]
-    doc = db.orders.find_one({"order_number": order_number}, {"customer_email": 1, "_id": 0})
+    doc = db.orders.find_one(
+        {"order_number": order_number}, {"customer_email": 1, "_id": 0}
+    )
     doc["customer_email"]
 
 
@@ -106,7 +108,10 @@ def read_10000_orders(ctx):
 )
 def read_100_categories(ctx):
     db = ctx["db"]
-    [category_from_doc(doc) for doc in db.categories.find().sort("view_count", -1).limit(100)]
+    [
+        category_from_doc(doc)
+        for doc in db.categories.find().sort("view_count", -1).limit(100)
+    ]
 
 
 @benchmark(
@@ -118,7 +123,10 @@ def read_100_categories(ctx):
 )
 def read_1000_categories(ctx):
     db = ctx["db"]
-    [category_from_doc(doc) for doc in db.categories.find().sort("view_count", -1).limit(1000)]
+    [
+        category_from_doc(doc)
+        for doc in db.categories.find().sort("view_count", -1).limit(1000)
+    ]
 
 
 @benchmark(
@@ -130,4 +138,7 @@ def read_1000_categories(ctx):
 )
 def read_10000_categories(ctx):
     db = ctx["db"]
-    [category_from_doc(doc) for doc in db.categories.find().sort("view_count", -1).limit(10000)]
+    [
+        category_from_doc(doc)
+        for doc in db.categories.find().sort("view_count", -1).limit(10000)
+    ]

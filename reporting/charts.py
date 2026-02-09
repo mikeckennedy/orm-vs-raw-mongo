@@ -3,6 +3,7 @@ from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import matplotlib
+
 matplotlib.use("Agg")
 
 from benchmarks.registry import OpType
@@ -45,17 +46,23 @@ def generate_charts(results: list[BenchmarkResult], output_dir: str = "output"):
     for r in results:
         by_name[r.benchmark.name][r.benchmark.library.value] = r
 
-    reads = {k: v for k, v in by_name.items() if any(
-        r.benchmark.op_type == OpType.READ for r in v.values()
-    )}
-    writes = {k: v for k, v in by_name.items() if any(
-        r.benchmark.op_type == OpType.WRITE for r in v.values()
-    )}
+    reads = {
+        k: v
+        for k, v in by_name.items()
+        if any(r.benchmark.op_type == OpType.READ for r in v.values())
+    }
+    writes = {
+        k: v
+        for k, v in by_name.items()
+        if any(r.benchmark.op_type == OpType.WRITE for r in v.values())
+    }
 
     if reads:
         _bar_chart(reads, "Read Benchmark Results", f"{output_dir}/read_benchmarks.png")
     if writes:
-        _bar_chart(writes, "Write Benchmark Results", f"{output_dir}/write_benchmarks.png")
+        _bar_chart(
+            writes, "Write Benchmark Results", f"{output_dir}/write_benchmarks.png"
+        )
     if by_name:
         _overhead_chart(by_name, f"{output_dir}/overhead_comparison.png")
 
@@ -117,15 +124,9 @@ def _overhead_chart(
         dc_r = lib_results.get("dataclasses_raw")
         beanie_r = lib_results.get("beanie")
         me_r = lib_results.get("mongoengine")
-        dc_overheads.append(
-            dc_r.median_ms / raw_r.median_ms if dc_r else 0
-        )
-        beanie_overheads.append(
-            beanie_r.median_ms / raw_r.median_ms if beanie_r else 0
-        )
-        me_overheads.append(
-            me_r.median_ms / raw_r.median_ms if me_r else 0
-        )
+        dc_overheads.append(dc_r.median_ms / raw_r.median_ms if dc_r else 0)
+        beanie_overheads.append(beanie_r.median_ms / raw_r.median_ms if beanie_r else 0)
+        me_overheads.append(me_r.median_ms / raw_r.median_ms if me_r else 0)
 
     n = len(names)
     bar_width = 0.25
@@ -136,15 +137,31 @@ def _overhead_chart(
     positions_b = [x + bar_width for x in range(n)]
     positions_m = [x + bar_width * 2 for x in range(n)]
 
-    ax.bar(positions_d, dc_overheads, bar_width,
-           label="Dataclasses + Raw", color=COLORS["dataclasses_raw"])
-    ax.bar(positions_b, beanie_overheads, bar_width,
-           label="Beanie", color=COLORS["beanie"])
-    ax.bar(positions_m, me_overheads, bar_width,
-           label="MongoEngine", color=COLORS["mongoengine"])
+    ax.bar(
+        positions_d,
+        dc_overheads,
+        bar_width,
+        label="Dataclasses + Raw",
+        color=COLORS["dataclasses_raw"],
+    )
+    ax.bar(
+        positions_b, beanie_overheads, bar_width, label="Beanie", color=COLORS["beanie"]
+    )
+    ax.bar(
+        positions_m,
+        me_overheads,
+        bar_width,
+        label="MongoEngine",
+        color=COLORS["mongoengine"],
+    )
 
-    ax.axhline(y=1.0, color=COLORS["raw"], linestyle="--", linewidth=2,
-               label="Raw baseline (1.0x)")
+    ax.axhline(
+        y=1.0,
+        color=COLORS["raw"],
+        linestyle="--",
+        linewidth=2,
+        label="Raw baseline (1.0x)",
+    )
 
     ax.set_xlabel("Benchmark")
     ax.set_ylabel("Overhead Multiplier (vs Raw)")

@@ -64,10 +64,14 @@ def run_benchmarks(
     op_type: OpType | None = None,
 ) -> list[BenchmarkResult]:
     # Import benchmark modules to trigger registration
-    import raw.reads, raw.writes  # noqa: F401
-    import dataclasses_raw.reads, dataclasses_raw.writes  # noqa: F401
-    import beanie_odm.reads, beanie_odm.writes  # noqa: F401
-    import mongoengine_odm.reads, mongoengine_odm.writes  # noqa: F401
+    import raw.reads
+    import raw.writes  # noqa: F401
+    import dataclasses_raw.reads
+    import dataclasses_raw.writes  # noqa: F401
+    import beanie_odm.reads
+    import beanie_odm.writes  # noqa: F401
+    import mongoengine_odm.reads
+    import mongoengine_odm.writes  # noqa: F401
 
     all_bms = get_benchmarks(library=library, op_type=op_type)
 
@@ -94,12 +98,14 @@ def run_benchmarks(
             connect_mongoengine()
 
         for bm in sync_reads + sync_writes:
-            task = progress.add_task(
-                f"{bm.library.value}: {bm.name}", total=None
-            )
+            task = progress.add_task(f"{bm.library.value}: {bm.name}", total=None)
             timings = _run_sync_benchmark(bm, ctx)
             results.append(_compute_stats(bm, timings))
-            progress.update(task, completed=True, description=f"[green]{bm.library.value}: {bm.name}")
+            progress.update(
+                task,
+                completed=True,
+                description=f"[green]{bm.library.value}: {bm.name}",
+            )
             progress.stop_task(task)
 
         if any(b.library == Library.MONGOENGINE for b in sync_reads + sync_writes):
@@ -146,9 +152,7 @@ async def _run_all_async_benchmarks(
 
     results = []
     for bm in benchmarks:
-        task = progress.add_task(
-            f"{bm.library.value}: {bm.name}", total=None
-        )
+        task = progress.add_task(f"{bm.library.value}: {bm.name}", total=None)
         timings = []
         for _ in range(ITERATIONS):
             timer = AsyncTimer()
@@ -156,7 +160,9 @@ async def _run_all_async_benchmarks(
                 await bm.func(ctx)
             timings.append(timer.result.elapsed_seconds)
         results.append(_compute_stats(bm, timings))
-        progress.update(task, completed=True, description=f"[green]{bm.library.value}: {bm.name}")
+        progress.update(
+            task, completed=True, description=f"[green]{bm.library.value}: {bm.name}"
+        )
         progress.stop_task(task)
 
     client.close()

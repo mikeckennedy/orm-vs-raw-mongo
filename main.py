@@ -1,5 +1,4 @@
 import argparse
-import sys
 
 from config import DB_NAME, SEED_COUNT
 from db import get_pymongo_client
@@ -14,9 +13,7 @@ def main():
 
     # seed command
     seed_parser = subparsers.add_parser("seed", help="Seed the database")
-    seed_parser.add_argument(
-        "--force", action="store_true", help="Drop and re-seed"
-    )
+    seed_parser.add_argument("--force", action="store_true", help="Drop and re-seed")
 
     # reset command
     subparsers.add_parser("reset", help="Drop the benchmark database")
