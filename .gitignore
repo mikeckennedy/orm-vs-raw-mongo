@@ -108,3 +108,6 @@ Thumbs.db
 
 # Project specific
 *.log
+output/overhead_comparison.png
+output/read_benchmarks.png
+output/write_benchmarks.png
