@@ -5,15 +5,15 @@ from typing import Callable
 
 
 class Library(str, Enum):
-    RAW = "raw"
-    DATACLASSES_RAW = "dataclasses_raw"
-    BEANIE = "beanie"
-    MONGOENGINE = "mongoengine"
+    RAW = 'raw'
+    DATACLASSES_RAW = 'dataclasses_raw'
+    BEANIE = 'beanie'
+    MONGOENGINE = 'mongoengine'
 
 
 class OpType(str, Enum):
-    READ = "read"
-    WRITE = "write"
+    READ = 'read'
+    WRITE = 'write'
 
 
 @dataclass
@@ -35,7 +35,7 @@ def benchmark(
     library: Library,
     op_type: OpType,
     collection: str,
-    description: str = "",
+    description: str = '',
 ):
     def decorator(func):
         info = BenchmarkInfo(

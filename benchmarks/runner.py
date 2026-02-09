@@ -2,16 +2,15 @@ import asyncio
 import statistics
 from dataclasses import dataclass
 
-from rich.progress import Progress, SpinnerColumn, TextColumn
-
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from config import MONGO_URI, DB_NAME, ITERATIONS
-from db import get_pymongo_db, connect_mongoengine, disconnect_mongoengine
-from models.beanie_models import CategoryDoc, OrderDoc
 from benchmarks.registry import BenchmarkInfo, Library, OpType, get_benchmarks
-from benchmarks.timer import sync_timer, AsyncTimer
+from benchmarks.timer import AsyncTimer, sync_timer
+from config import DB_NAME, ITERATIONS, MONGO_URI
+from db import connect_mongoengine, disconnect_mongoengine, get_pymongo_db
+from models.beanie_models import CategoryDoc, OrderDoc
 
 
 @dataclass
@@ -42,20 +41,20 @@ def _compute_stats(bm: BenchmarkInfo, timings: list[float]) -> BenchmarkResult:
 
 def preselect_targets(db) -> dict:
     """Pick random query targets that all libraries will use."""
-    sample_cat = db.categories.aggregate([{"$sample": {"size": 1}}]).next()
-    sample_order = db.orders.aggregate([{"$sample": {"size": 1}}]).next()
+    sample_cat = db.categories.aggregate([{'$sample': {'size': 1}}]).next()
+    sample_order = db.orders.aggregate([{'$sample': {'size': 1}}]).next()
 
     # Find status with most documents for bulk reads
     pipeline = [
-        {"$group": {"_id": "$status", "count": {"$sum": 1}}},
-        {"$sort": {"count": -1}},
+        {'$group': {'_id': '$status', 'count': {'$sum': 1}}},
+        {'$sort': {'count': -1}},
     ]
-    best_status = next(db.orders.aggregate(pipeline))["_id"]
+    best_status = next(db.orders.aggregate(pipeline))['_id']
 
     return {
-        "category_slug": sample_cat["slug"],
-        "order_number": sample_order["order_number"],
-        "bulk_status": best_status,
+        'category_slug': sample_cat['slug'],
+        'order_number': sample_order['order_number'],
+        'bulk_status': best_status,
     }
 
 
@@ -64,27 +63,27 @@ def run_benchmarks(
     op_type: OpType | None = None,
 ) -> list[BenchmarkResult]:
     # Import benchmark modules to trigger registration
-    import raw.reads
-    import raw.writes  # noqa: F401
-    import dataclasses_raw.reads
-    import dataclasses_raw.writes  # noqa: F401
     import beanie_odm.reads
     import beanie_odm.writes  # noqa: F401
+    import dataclasses_raw.reads
+    import dataclasses_raw.writes  # noqa: F401
     import mongoengine_odm.reads
     import mongoengine_odm.writes  # noqa: F401
+    import raw.reads
+    import raw.writes  # noqa: F401
 
     all_bms = get_benchmarks(library=library, op_type=op_type)
 
     # Pre-select query targets
     db = get_pymongo_db()
     targets = preselect_targets(db)
-    ctx = {"db": db, "targets": targets}
+    ctx = {'db': db, 'targets': targets}
 
     results = []
 
     with Progress(
         SpinnerColumn(),
-        TextColumn("[bold cyan]{task.description}"),
+        TextColumn('[bold cyan]{task.description}'),
     ) as progress:
         # Run reads first, then writes
         reads = [b for b in all_bms if b.op_type == OpType.READ]
@@ -98,13 +97,13 @@ def run_benchmarks(
             connect_mongoengine()
 
         for bm in sync_reads + sync_writes:
-            task = progress.add_task(f"{bm.library.value}: {bm.name}", total=None)
+            task = progress.add_task(f'{bm.library.value}: {bm.name}', total=None)
             timings = _run_sync_benchmark(bm, ctx)
             results.append(_compute_stats(bm, timings))
             progress.update(
                 task,
                 completed=True,
-                description=f"[green]{bm.library.value}: {bm.name}",
+                description=f'[green]{bm.library.value}: {bm.name}',
             )
             progress.stop_task(task)
 
@@ -112,22 +111,20 @@ def run_benchmarks(
             disconnect_mongoengine()
 
         # Cleanup write benchmark docs (sync)
-        db.categories.delete_many({"_benchmark": True})
-        db.orders.delete_many({"_benchmark": True})
+        db.categories.delete_many({'_benchmark': True})
+        db.orders.delete_many({'_benchmark': True})
 
         # --- Async benchmarks (beanie) ---
         async_reads = [b for b in reads if b.is_async]
         async_writes = [b for b in writes if b.is_async]
 
         if async_reads or async_writes:
-            async_results = asyncio.run(
-                _run_all_async_benchmarks(async_reads + async_writes, ctx, progress)
-            )
+            async_results = asyncio.run(_run_all_async_benchmarks(async_reads + async_writes, ctx, progress))
             results.extend(async_results)
 
             # Cleanup write benchmark docs (async inserts went to same collections)
-            db.categories.delete_many({"_benchmark": True})
-            db.orders.delete_many({"_benchmark": True})
+            db.categories.delete_many({'_benchmark': True})
+            db.orders.delete_many({'_benchmark': True})
 
     return results
 
@@ -152,7 +149,7 @@ async def _run_all_async_benchmarks(
 
     results = []
     for bm in benchmarks:
-        task = progress.add_task(f"{bm.library.value}: {bm.name}", total=None)
+        task = progress.add_task(f'{bm.library.value}: {bm.name}', total=None)
         timings = []
         for _ in range(ITERATIONS):
             timer = AsyncTimer()
@@ -160,9 +157,7 @@ async def _run_all_async_benchmarks(
                 await bm.func(ctx)
             timings.append(timer.result.elapsed_seconds)
         results.append(_compute_stats(bm, timings))
-        progress.update(
-            task, completed=True, description=f"[green]{bm.library.value}: {bm.name}"
-        )
+        progress.update(task, completed=True, description=f'[green]{bm.library.value}: {bm.name}')
         progress.stop_task(task)
 
     client.close()

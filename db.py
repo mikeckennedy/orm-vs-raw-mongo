@@ -1,8 +1,8 @@
-from pymongo import MongoClient
-from motor.motor_asyncio import AsyncIOMotorClient
 import mongoengine
+from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import MongoClient
 
-from config import MONGO_URI, DB_NAME
+from config import DB_NAME, MONGO_URI
 
 
 def get_pymongo_client() -> MongoClient:

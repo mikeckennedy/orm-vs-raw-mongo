@@ -1,6 +1,5 @@
 import mongoengine as me
 
-
 # --- Embedded documents ---
 
 
@@ -40,11 +39,11 @@ class CategoryDoc(me.Document):
     is_active = me.BooleanField(required=True)
 
     meta = {
-        "collection": "categories",
-        "indexes": [
-            "name",
-            "slug",
-            {"fields": ["-view_count"]},
+        'collection': 'categories',
+        'indexes': [
+            'name',
+            'slug',
+            {'fields': ['-view_count']},
         ],
     }
 
@@ -63,12 +62,12 @@ class OrderDoc(me.Document):
     status_history = me.EmbeddedDocumentListField(StatusEntry, required=True)
 
     meta = {
-        "collection": "orders",
-        "indexes": [
-            "order_number",
-            "customer_email",
-            "status",
-            {"fields": ["-total_cents"]},
-            {"fields": ["-created_at"]},
+        'collection': 'orders',
+        'indexes': [
+            'order_number',
+            'customer_email',
+            'status',
+            {'fields': ['-total_cents']},
+            {'fields': ['-created_at']},
         ],
     }

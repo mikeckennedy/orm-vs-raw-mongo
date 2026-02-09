@@ -1,8 +1,8 @@
+from datetime import datetime
+
 from beanie import Document
 from pydantic import BaseModel
 from pymongo import IndexModel
-from datetime import datetime
-
 
 # --- Subdocument models (plain Pydantic) ---
 
@@ -54,11 +54,11 @@ class CategoryDoc(Document):
     is_active: bool
 
     class Settings:
-        name = "categories"
+        name = 'categories'
         indexes = [
-            IndexModel([("name", 1)], unique=True),
-            IndexModel([("slug", 1)], unique=True),
-            IndexModel([("view_count", -1)]),
+            IndexModel([('name', 1)], unique=True),
+            IndexModel([('slug', 1)], unique=True),
+            IndexModel([('view_count', -1)]),
         ]
 
 
@@ -76,11 +76,11 @@ class OrderDoc(Document):
     status_history: list[StatusEntry]
 
     class Settings:
-        name = "orders"
+        name = 'orders'
         indexes = [
-            IndexModel([("order_number", 1)], unique=True),
-            IndexModel([("customer_email", 1)]),
-            IndexModel([("status", 1)]),
-            IndexModel([("total_cents", -1)]),
-            IndexModel([("created_at", -1)]),
+            IndexModel([('order_number', 1)], unique=True),
+            IndexModel([('customer_email', 1)]),
+            IndexModel([('status', 1)]),
+            IndexModel([('total_cents', -1)]),
+            IndexModel([('created_at', -1)]),
         ]
