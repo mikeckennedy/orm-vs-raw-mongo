@@ -1,0 +1,14 @@
+[project]
+name = "orm-vs-raw-mongo"
+version = "0.1.0"
+description = "MongoDB ODM vs Raw PyMongo performance benchmarks"
+requires-python = ">=3.13"
+dependencies = [
+    "pymongo",
+    "motor",
+    "beanie",
+    "mongoengine",
+    "faker",
+    "rich",
+    "matplotlib",
+]
