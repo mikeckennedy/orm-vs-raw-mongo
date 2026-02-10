@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from bson import ObjectId
+
 
 @dataclass(slots=True)
 class Address:
@@ -34,6 +36,7 @@ class StatusEntry:
 
 @dataclass(slots=True)
 class Category:
+    id: ObjectId
     name: str
     slug: str
     view_count: int
@@ -42,6 +45,7 @@ class Category:
 
 @dataclass(slots=True)
 class Order:
+    id: ObjectId
     order_number: str
     customer_email: str
     status: str
@@ -57,6 +61,7 @@ class Order:
 
 def category_from_doc(doc: dict) -> Category:
     return Category(
+        id=doc['_id'],
         name=doc['name'],
         slug=doc['slug'],
         view_count=doc['view_count'],
@@ -66,6 +71,7 @@ def category_from_doc(doc: dict) -> Category:
 
 def order_from_doc(doc: dict) -> Order:
     return Order(
+        id=doc['_id'],
         order_number=doc['order_number'],
         customer_email=doc['customer_email'],
         status=doc['status'],
