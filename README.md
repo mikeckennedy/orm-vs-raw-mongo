@@ -1,5 +1,7 @@
 # ORM vs Raw MongoDB Benchmarks
 
+> **Read the full article:** [Going Raw Dog on the Database](https://mkennedy.codes/posts/going-raw-dog-on-the-database/) -- After 25+ years of championing ORMs, Michael Kennedy makes the case for abandoning them in favor of raw database queries paired with Python dataclasses. The **Raw+DC pattern** delivers better AI coding assistance, fewer dependencies, and comparable or superior performance -- all while keeping type safety at your data access boundaries. This repo contains the benchmark code behind those findings.
+
 A performance benchmark suite comparing four Python approaches to MongoDB:
 
 | Approach | Driver | Style |
