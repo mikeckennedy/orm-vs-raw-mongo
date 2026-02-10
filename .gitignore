@@ -111,3 +111,4 @@ Thumbs.db
 output/overhead_comparison.png
 output/read_benchmarks.png
 output/write_benchmarks.png
+output/odm-beanie-mongoengine-raw-pymono-comparison.png

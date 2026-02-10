@@ -24,9 +24,11 @@ def read_single_field_category(ctx):
     description="Select only 'customer_email' from one Order by order_number (projection), convert to dataclass",
 )
 def read_single_field_order(ctx):
-    db = ctx['db']
     order_number = ctx['targets']['order_number']
+
+    db = ctx['db']
     doc = db.orders.find_one({'order_number': order_number}, {'customer_email': 1, '_id': 0})
+
     doc['customer_email']
 
 
